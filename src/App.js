@@ -6,7 +6,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      heroes: []
+      heroes: {}
     }
   }
 
@@ -16,9 +16,11 @@ class App extends Component {
   }
 
   render() {
+    const { heroes } = this.state
+    const heroesArray = Object.values(heroes)
     return (
       <div className="App">
-        {this.state.heroes.map(hero => {
+        {heroesArray.map(hero => {
           return  <img style={{height: 200, width:200, borderRadius: 50}} key={hero.id} alt={hero.name} src={hero.thumbnail} />
         })}
       </div>
