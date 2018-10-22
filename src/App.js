@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import HeroCard from './atoms/heroCard'
 import './App.css';
 import getHeroes from './services/getHeroes'
 
@@ -40,12 +41,11 @@ class App extends Component {
       <div className="App">
         {heroesArray.map((heroId, key) => {
           const hero = heroes[heroId]
-          return  <img
-            style={{height: 200, width:200, borderRadius: 50}}
+          return  <HeroCard
+            size={200}
             key={key}
-            alt={hero.name}
-            src={hero.thumbnail}
-            onClick={() => this.shuffle()}
+            hero={hero}
+            shuffle={() => this.shuffle()}
           />
         })}
       </div>
