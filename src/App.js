@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import HeroCard from './atoms/heroCard'
-import './App.css';
 import getHeroes from './services/getHeroes'
+import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       heroes: {},
-      heroesArray: []
+      heroesArray: [],
+      heroesPicked: 0,
+      heroesDiscovered: new Set()
     }
   }
 
@@ -31,12 +33,25 @@ class App extends Component {
       heroesArray[i] = heroesArray[j];
       heroesArray[j] = temp;
     }
-
     this.setState({ heroesArray })
+  }
+
+  pickCard(heroId) {
+    const { heroesPicked, heroesDiscovered } = this.state
+
+    if (heroesDiscovered.has(heroId)) return this.setState({ heroesPicked: 0 })
+    if (heroesPicked === 0) return this.setState({ heroesPicked: heroId })
+    else if (heroesPicked === heroId) {
+      heroesDiscovered.add(heroId)
+      console.log('discovered', heroesDiscovered)
+      return this.setState({ heroesPicked: 0, heroesDiscovered })
+    }
+    this.setState({ heroesPicked: 0 })
   }
 
   render() {
     const { heroesArray, heroes } = this.state
+
     return (
       <div className="App">
         {heroesArray.map((heroId, key) => {
@@ -45,7 +60,7 @@ class App extends Component {
             size={200}
             key={key}
             hero={hero}
-            shuffle={() => this.shuffle()}
+            shuffle={() => this.pickCard(heroId)}
           />
         })}
       </div>
