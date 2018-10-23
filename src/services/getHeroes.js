@@ -10,7 +10,7 @@ export default () => {
   const stringToHash = ts + privateKey + publicKey
   const hash = md5(stringToHash)
 
-  return fetch(`${baseURL}characters?limit=16&ts=${ts}&apikey=${publicKey}&hash=${hash}`)
+  return fetch(`${baseURL}characters?limit=60&ts=${ts}&apikey=${publicKey}&hash=${hash}`)
     .then(response => {
       return response.json()
     })
@@ -20,7 +20,7 @@ export default () => {
       return results.filter((element) => {
         const elementHasAPicture = !element.thumbnail.path.includes('image_not_available') 
         if (elementHasAPicture) count++
-        return elementHasAPicture && count <= 8
+        return elementHasAPicture && count <= 32
       }).map(element => {
         return {
           id: element.id,

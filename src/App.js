@@ -24,7 +24,11 @@ class App extends Component {
 
   shuffle() {
     const { heroes } = this.state
+    const position = Math.floor(Math.random() * 24)
     const heroesIds = Object.keys(heroes)
+      .filter((element, index) => {
+        return position < index && index < position + 9
+      })
     let heroesArray = heroesIds.concat(heroesIds)
 
     for (var i = heroesArray.length - 1; i > 0; i--) {
