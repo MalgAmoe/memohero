@@ -27,9 +27,6 @@ export default () => {
           name: element.name,
           thumbnail: `${element.thumbnail.path}.${element.thumbnail.extension}`
         }
-      }).reduce((heroes, hero) => {
-        heroes = { ...heroes, [hero.id]: { ...hero } }
-        return heroes
-      }, {})
+      })
     })
 }
