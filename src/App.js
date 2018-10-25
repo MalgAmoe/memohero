@@ -9,7 +9,7 @@ class App extends Component {
     this.state = {
       heroes: [],
       heroesArray: [],
-      heroesPicked: { key: null, heroId: 0 },
+      heroesPicked: { key: null, id: [] },
       heroesDiscovered: new Set()
     }
   }
@@ -46,14 +46,14 @@ class App extends Component {
   pickCard(hero, key) {
     const { heroesPicked, heroesDiscovered } = this.state
 
-    if (heroesDiscovered.has(hero.id)) return this.setState({ heroesPicked: { key: null, id: 0 } })
-    if (heroesPicked.key === null) return this.setState({ heroesPicked: { key, id: hero.id } })
-    else if (heroesPicked.id === hero.id && heroesPicked.key !== key) {
+    if (heroesDiscovered.has(hero.id)) return this.setState({ heroesPicked: { key: 0, id: [] } })
+    if (heroesPicked.length === 0) return this.setState({ heroesPicked: { key, id: [hero.id]} })
+    else if (heroesPicked.id[0] === hero.id && heroesPicked.key !== key) {
       heroesDiscovered.add(hero.id)
-      return this.setState({ heroesPicked: { key: null, id: 0 }, heroesDiscovered })
+      return this.setState({ heroesPicked: { heroesPicked: { ...heroesPicked, id: [...heroesPicked.id, hero.id]  } }, heroesDiscovered })
     }
 
-    this.setState({ heroesPicked: { key: null, id: 0 } })
+    this.setState({ heroesPicked: [] })
   }
 
   render() {
