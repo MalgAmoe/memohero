@@ -9,8 +9,7 @@ class App extends Component {
     this.state = {
       heroes: [],
       heroesArray: [],
-      heroesPicked: { key: null, id: [] },
-      heroesDiscovered: new Set()
+      heroesPicked: []
     }
   }
 
@@ -28,7 +27,7 @@ class App extends Component {
     const heightHeroes = heroes
     .slice(position, position + 8)
     .map(element => {
-      return { ...element, picked: false }
+      return { ...element, discovered: false }
     })
 
     let heroesArray = heightHeroes.concat(heightHeroes)
@@ -43,32 +42,47 @@ class App extends Component {
     this.setState({ heroesArray })
   }
 
-  pickCard(hero, key) {
-    const { heroesPicked, heroesDiscovered } = this.state
+  pickCard(key) {
+    const { heroesPicked } = this.state
+    if (heroesPicked.length > 1) return this.setState({ heroesPicked: [] })
+    console.log(heroesPicked[0], key)
+    if (heroesPicked.length === 1 && heroesPicked[0] === key) return
+    heroesPicked.push(key)
+    this.setState({ heroesPicked })
+    this.checkCards()
+  }
 
-    if (heroesDiscovered.has(hero.id)) return this.setState({ heroesPicked: { key: 0, id: [] } })
-    if (heroesPicked.length === 0) return this.setState({ heroesPicked: { key, id: [hero.id]} })
-    else if (heroesPicked.id[0] === hero.id && heroesPicked.key !== key) {
-      heroesDiscovered.add(hero.id)
-      return this.setState({ heroesPicked: { heroesPicked: { ...heroesPicked, id: [...heroesPicked.id, hero.id]  } }, heroesDiscovered })
+  checkCards() {
+    const { heroesPicked, heroesArray } = this.state
+    if (heroesPicked.length < 2) return
+    const firstCardKey = heroesPicked[0]
+    const secondCardKey = heroesPicked[1]
+    const firstCardId = heroesArray[firstCardKey].id
+    const secondCardId = heroesArray[secondCardKey].id
+    if (firstCardId === secondCardId && firstCardKey !== secondCardKey) {
+      const newHeroesArray = heroesArray.map(hero => {
+        if (hero.id === firstCardId || hero.id === secondCardId) {
+          return { ...hero, discovered: true }
+        }
+        return hero
+      })
+      this.setState({ heroesArray: newHeroesArray })
     }
-
-    this.setState({ heroesPicked: [] })
   }
 
   render() {
-    const { heroesArray, heroesPicked, heroesDiscovered } = this.state
+    const { heroesArray, heroesPicked } = this.state
 
     return (
       <div className="App">
         {heroesArray.map((hero, key) => {
-          const picked = heroesPicked.key === key || heroesDiscovered.has(hero.id)
+          const picked = heroesPicked.includes(key) || hero.discovered
           return  <HeroCard
             size={200}
             key={key}
             hero={hero}
             picked={picked}
-            pickCard={() => this.pickCard(hero, key)}
+            pickCard={() => this.pickCard(key)}
           />
         })}
       </div>
