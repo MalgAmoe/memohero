@@ -15,25 +15,28 @@ class App extends Component {
 
   componentDidMount() {
     getHeroes()
-    .then(heroes => {
-      this.setState({ heroes })
-      this.getHeroesPlayground()
-    })
+      .then(heroes => {
+        this.setState({ heroes })
+        this.getHeroesPlayground()
+      })
   }
 
   shuffleArray(array) {
     const newArray = [].concat(array)
+
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       const temp = newArray[i]
       newArray[i] = newArray[j]
       newArray[j] = temp
     }
+
     return newArray
   }
 
   getHeroesPlayground() {
     const { heroes } = this.state
+
     const heightHeroes = this.shuffleArray(Object.values(heroes))
       .slice(0, 8)
       .map(element => {
@@ -46,10 +49,10 @@ class App extends Component {
   }
 
   pickCard(key) {
-    const { heroesPicked } = this.state
+    const { heroesPicked, heroesArray } = this.state
     if (heroesPicked.length > 1) return this.setState({ heroesPicked: [] })
-    console.log(heroesPicked[0], key)
-    if (heroesPicked.length === 1 && heroesPicked[0] === key) return
+    if ((heroesPicked.length === 1 && heroesPicked[0] === key) || heroesArray[key].discovered) return
+
     heroesPicked.push(key)
     this.setState({ heroesPicked })
     this.checkCards()
@@ -58,10 +61,12 @@ class App extends Component {
   checkCards() {
     const { heroesPicked, heroesArray } = this.state
     if (heroesPicked.length < 2) return
+
     const firstCardKey = heroesPicked[0]
     const secondCardKey = heroesPicked[1]
     const firstCardId = heroesArray[firstCardKey].id
     const secondCardId = heroesArray[secondCardKey].id
+
     if (firstCardId === secondCardId && firstCardKey !== secondCardKey) {
       const newHeroesArray = heroesArray.map(hero => {
         if (hero.id === firstCardId || hero.id === secondCardId) {
@@ -69,7 +74,7 @@ class App extends Component {
         }
         return hero
       })
-      this.setState({ heroesArray: newHeroesArray })
+      this.setState({ heroesArray: newHeroesArray, heroesPicked: [] })
     }
   }
 
