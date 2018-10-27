@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      heroes: [],
+      heroes: {},
       heroesArray: [],
       heroesPicked: []
     }
@@ -24,7 +24,7 @@ class App extends Component {
   shuffle() {
     const { heroes } = this.state
     const position = Math.floor(Math.random() * 24)
-    const heightHeroes = heroes
+    const heightHeroes = Object.values(heroes)
     .slice(position, position + 8)
     .map(element => {
       return { ...element, discovered: false }
