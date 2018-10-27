@@ -18,8 +18,17 @@ class Playground extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { heroes } = nextProps
-    this.getHeroesPlayground(heroes)
+    const { heroes } = this.props
+    if(nextProps.heroes !== heroes) {
+      this.getHeroesPlayground(nextProps.heroes)
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { heroesArray } = this.state
+    if (prevState.heroesArray !== heroesArray) {
+      this.checkGameStatus()
+    }
   }
 
   shuffleArray(array) {
@@ -52,6 +61,15 @@ class Playground extends React.Component {
     heroesPicked.push(key)
     this.setState({ heroesPicked })
     this.checkCards()
+  }
+
+  checkGameStatus() {
+    const { heroesArray } = this.state
+    const { checkVictory } = this.props
+    const status = heroesArray.every(hero => {
+      return hero.discovered
+    })
+    checkVictory(status)
   }
 
   checkCards() {
