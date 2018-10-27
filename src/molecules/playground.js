@@ -6,6 +6,7 @@ class Playground extends React.Component {
     super(props)
     this.state = {
       heroesPicked: [],
+      heroesArray: [],
       containerStyle: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -16,9 +17,34 @@ class Playground extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { heroes } = nextProps
+    this.getHeroesPlayground(heroes)
+  }
+
+  shuffleArray(array) {
+    const newArray = [].concat(array)
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      const temp = newArray[i]
+      newArray[i] = newArray[j]
+      newArray[j] = temp
+    }
+    return newArray
+  }
+
+  getHeroesPlayground(heroes) {
+    const heightHeroes = this.shuffleArray(Object.values(heroes))
+      .slice(0, 8)
+      .map(element => {
+        return { ...element, discovered: false }
+      })
+    const heroesArray = this.shuffleArray(heightHeroes.concat(heightHeroes))
+    this.setState({ heroesArray })
+  }
+
   pickCard(key) {
-    const { heroesPicked } = this.state
-    const { heroesArray } = this.props
+    const { heroesPicked, heroesArray } = this.state
 
     if (heroesPicked.length > 1) return this.setState({ heroesPicked: [] })
     if ((heroesPicked.length === 1 && heroesPicked[0] === key) || heroesArray[key].discovered) return
@@ -29,8 +55,7 @@ class Playground extends React.Component {
   }
 
   checkCards() {
-    const { heroesPicked } = this.state
-    const { heroesArray } = this.props
+    const { heroesPicked, heroesArray } = this.state
 
     if (heroesPicked.length < 2) return
 
@@ -51,18 +76,20 @@ class Playground extends React.Component {
   }
 
   render() {
-    const { containerStyle, heroesPicked } = this.state
-    const { heroesArray, size } = this.props
+    const { containerStyle, heroesPicked, heroesArray } = this.state
+    const { size } = this.props
 
     return(
       <div style={containerStyle}>
         {heroesArray.map((hero, key) => {
-          const picked = heroesPicked.includes(key) || hero.discovered
+          const picked = heroesPicked.includes(key)
+          const discovered = hero.discovered
           return  <HeroCard
             size={size * 0.25}
             key={key}
             hero={hero}
             picked={picked}
+            discovered={discovered}
             pickCard={() => this.pickCard(key)}
           />
         })}
