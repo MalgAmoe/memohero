@@ -9,11 +9,14 @@ const HeroCard = ({ hero, size, pickCard, picked, discovered }) => {
     opacity: discovered ? 0.67 : 1
   }
 
+  const img = new Image()
+  img.src = hero.thumbnail
+
   return (
     <img
       style={style}
       alt={hero.name}
-      src={picked || discovered ? hero.thumbnail : 'https://vignette.wikia.nocookie.net/callofduty/images/4/48/Evil_smiley_face.jpg/revision/latest?cb=20100921012126' }
+      src={picked || discovered ? img.src : 'https://vignette.wikia.nocookie.net/callofduty/images/4/48/Evil_smiley_face.jpg/revision/latest?cb=20100921012126' }
       onClick={pickCard}
     />
 )
