@@ -3,22 +3,42 @@ import HeroCard from './atoms/heroCard'
 import getHeroes from './services/getHeroes'
 import './App.css';
 
+
+
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       heroes: {},
       heroesArray: [],
-      heroesPicked: []
+      heroesPicked: [],
+      containerStyle: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        margin: 'auto'
+      }
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    this.updateDimensions()
+    window.addEventListener("resize", () => this.updateDimensions())
     getHeroes()
       .then(heroes => {
         this.setState({ heroes })
         this.getHeroesPlayground()
       })
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", () => this.updateDimensions())
+  }
+
+  updateDimensions() {
+    const { containerStyle } = this.state
+    const containerSize = window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth
+    const newContainerStyle = { ...containerStyle, width: containerSize, height: containerSize }
+    this.setState({ containerStyle: newContainerStyle, containerSize})
   }
 
   shuffleArray(array) {
@@ -79,20 +99,22 @@ class App extends Component {
   }
 
   render() {
-    const { heroesArray, heroesPicked } = this.state
+    const { heroesArray, heroesPicked, containerStyle, containerSize } = this.state
 
     return (
       <div className="App">
-        {heroesArray.map((hero, key) => {
-          const picked = heroesPicked.includes(key) || hero.discovered
-          return  <HeroCard
-            size={200}
-            key={key}
-            hero={hero}
-            picked={picked}
-            pickCard={() => this.pickCard(key)}
-          />
-        })}
+        <div style={containerStyle}>
+          {heroesArray.map((hero, key) => {
+            const picked = heroesPicked.includes(key) || hero.discovered
+            return  <HeroCard
+              size={containerSize * 0.25}
+              key={key}
+              hero={hero}
+              picked={picked}
+              pickCard={() => this.pickCard(key)}
+            />
+          })}
+        </div>
       </div>
     );
   }
