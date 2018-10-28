@@ -17,13 +17,6 @@ class Playground extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    const { heroes, dispatch } = this.props
-    if(nextProps.heroes !== heroes) {
-      dispatch(playgroundActions.shuffleHeroes(nextProps.heroes))
-    }
-  }
-
   pickCard(key) {
     const { dispatch } = this.props
     dispatch(playgroundActions.pickCard(key))

@@ -27,7 +27,7 @@ const shuffleHeroes = (state) => {
         return { ...element, discovered: false }
       })
   const heroesArray = shuffleArray(heightHeroes.concat(heightHeroes))
-  return { ...state, heroesArray }
+  return { ...state, heroesArray, score: 0, victory: false }
 }
 
 const getScore = (timestamps) => {

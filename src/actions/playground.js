@@ -46,7 +46,8 @@ export const fetchHeroes = () => (dispatch) => {
         heroes = { ...heroes, [hero.id]: { ...hero } }
         return heroes
       }, {})
-      dispatch(fetchHeroesSuccess(heroes));
+      dispatch(fetchHeroesSuccess(heroes))
+      dispatch(shuffleHeroes())
     })
     .catch((error) => {
       dispatch(fetchHeroesError(error.message))

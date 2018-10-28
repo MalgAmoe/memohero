@@ -37,6 +37,12 @@ class App extends Component {
     this.setState({ containerStyle: newContainerStyle, containerSize})
   }
 
+  restartGame() {
+    const { dispatch } = this.props
+    console.log('llll')
+    dispatch(playgroundActions.shuffleHeroes())
+  }
+
   render() {
     const { containerStyle, containerSize } = this.state
     const { victory, score } = this.props
@@ -46,7 +52,7 @@ class App extends Component {
         { !victory && <div style={{color:'white'}}>{score}</div> }
         {
           victory ?
-          <div style={{color:'white'}}>Yeahhhh {score} points for you</div> :
+          <div style={{color:'white'}} onClick={() => this.restartGame()}>Yeahhhh {score} points for you</div> :
           <Playground size={containerSize} />
         }
       </div>
