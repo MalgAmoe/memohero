@@ -40,8 +40,7 @@ class App extends Component {
   }
 
   checkVictory(status, score) {
-    status && this.setState({ victory: status })
-    this.setState({ score })
+    this.setState({ victory: status, score })
   }
 
   render() {
@@ -49,6 +48,7 @@ class App extends Component {
 
     return (
       <div className="App" style={containerStyle}>
+        { !victory && <div style={{color:'white'}}>{score}</div> }
         {
           victory ?
           <div style={{color:'white'}}>Yeahhhh {score} points for you</div> :

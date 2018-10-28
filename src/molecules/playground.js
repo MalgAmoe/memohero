@@ -8,8 +8,7 @@ class Playground extends React.Component {
       heroesPicked: [],
       heroesArray: [],
       oldTimestamp: 0,
-      oldTimestamps: [],
-      score: 0,
+      timestamps: [],
       containerStyle: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -28,8 +27,8 @@ class Playground extends React.Component {
   }
 
   componentDidUpdate(_, prevState) {
-    const { heroesArray } = this.state
-    if (prevState.heroesArray !== heroesArray) {
+    const { oldTimestamp } = this.state
+    if (prevState.oldTimestamp !== oldTimestamp) {
       this.checkGameStatus()
     }
   }
@@ -56,11 +55,11 @@ class Playground extends React.Component {
   }
 
   pickCard(key) {
-    const { heroesPicked, heroesArray, oldTimestamps } = this.state
+    const { heroesPicked, heroesArray, timestamps } = this.state
 
-    if (oldTimestamps.length === 0) {
+    if (timestamps.length === 0) {
       const oldTimestamp = Date.now()
-      this.setState({ oldTimestamp, oldTimestamps: [oldTimestamp] })
+      this.setState({ oldTimestamp, timestamps: [oldTimestamp] })
     }
     if (heroesPicked.length > 1) return this.setState({ heroesPicked: [] })
     if ((heroesPicked.length === 1 && heroesPicked[0] === key) || heroesArray[key].discovered) return
@@ -71,16 +70,21 @@ class Playground extends React.Component {
   }
 
   checkGameStatus() {
-    const { heroesArray, score } = this.state
+    const { heroesArray, timestamps } = this.state
     const { checkVictory } = this.props
     const status = heroesArray.every(hero => {
       return hero.discovered
     })
+    const score = timestamps.reduce((score, timestampDelta, key) => {
+      if(key === 0) return 0
+      score = score + Math.pow(Math.round(100000 / timestampDelta), 2)
+      return score
+    }, 0)
     checkVictory(status, score)
   }
 
   checkCards() {
-    const { heroesPicked, heroesArray, oldTimestamp, oldTimestamps } = this.state
+    const { heroesPicked, heroesArray, oldTimestamp, timestamps } = this.state
 
     if (heroesPicked.length < 2) return
 
@@ -92,20 +96,15 @@ class Playground extends React.Component {
     if (firstCardId === secondCardId && firstCardKey !== secondCardKey) {
       const timestamp = Date.now()
       const newTimestamp = timestamp - oldTimestamp
-      const newTimestamps = [...oldTimestamps, newTimestamp]
+      const newTimestamps = [...timestamps, newTimestamp]
       const newHeroesArray = heroesArray.map(hero => {
         if (hero.id === firstCardId || hero.id === secondCardId) {
           return { ...hero, discovered: true }
         }
         return hero
       })
-      const score = newTimestamps.reduce((score, timestampDelta, key) => {
-        if(key === 0) return 0
-        score = score + Math.round(1000000 / timestampDelta)
-        return score
-      }, 0)
 
-      this.setState({ heroesArray: newHeroesArray, heroesPicked: [], oldTimestamp: timestamp, oldTimestamps: newTimestamps, score })
+      this.setState({ heroesArray: newHeroesArray, heroesPicked: [], oldTimestamp: timestamp, timestamps: newTimestamps })
     }
   }
 
