@@ -12,7 +12,7 @@ const fetchHeroesError = error => ({ type: FETCH_HEROES_ERROR, error })
 
 export const shuffleHeroes = () => ({ type: SHUFFLE_HEROES })
 
-export const pickCard = () => ({ type: PICK_CARD })
+export const pickCard = (key) => ({ type: PICK_CARD, key })
 
 export const fetchHeroes = () => (dispatch) => {
   const baseURL = 'https://gateway.marvel.com:443/v1/public/'

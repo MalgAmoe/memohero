@@ -37,12 +37,9 @@ class App extends Component {
     this.setState({ containerStyle: newContainerStyle, containerSize})
   }
 
-  checkVictory(status, score) {
-    this.setState({ victory: status, score })
-  }
-
   render() {
-    const { containerStyle, containerSize, victory, score } = this.state
+    const { containerStyle, containerSize } = this.state
+    const { victory, score } = this.props
 
     return (
       <div className="App" style={containerStyle}>
@@ -50,7 +47,7 @@ class App extends Component {
         {
           victory ?
           <div style={{color:'white'}}>Yeahhhh {score} points for you</div> :
-          <Playground size={containerSize} victory={victory} checkVictory={(status, score) => this.checkVictory(status, score)} />
+          <Playground size={containerSize} />
         }
       </div>
     )
