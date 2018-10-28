@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Playground from './molecules/playground'
-import getHeroes from './services/getHeroes'
-import './App.css';
+import './App.css'
+import * as playgroundActions from './actions/playground'
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      heroes: {},
       victory: false,
       score: 0,
       containerStyle: {
@@ -20,12 +20,10 @@ class App extends Component {
   }
 
   componentWillMount() {
+    const { dispatch } = this.props
     this.updateDimensions()
     window.addEventListener("resize", () => this.updateDimensions())
-    getHeroes()
-      .then(heroes => {
-        this.setState({ heroes })
-      })
+    dispatch(playgroundActions.fetchHeroes())
   }
 
   componentWillUnmount() {
@@ -44,7 +42,7 @@ class App extends Component {
   }
 
   render() {
-    const { containerStyle, containerSize, heroes, victory, score } = this.state
+    const { containerStyle, containerSize, victory, score } = this.state
 
     return (
       <div className="App" style={containerStyle}>
@@ -52,11 +50,16 @@ class App extends Component {
         {
           victory ?
           <div style={{color:'white'}}>Yeahhhh {score} points for you</div> :
-          <Playground size={containerSize} heroes={heroes} victory={victory} checkVictory={(status, score) => this.checkVictory(status, score)} />
+          <Playground size={containerSize} victory={victory} checkVictory={(status, score) => this.checkVictory(status, score)} />
         }
       </div>
-    );
+    )
   }
 }
 
-export default App;
+const mapStateToProps = ({ playground }) => ({
+  score: playground.score,
+  victory: playground.victory
+})
+
+export default connect(mapStateToProps)(App)

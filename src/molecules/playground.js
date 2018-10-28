@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import HeroCard from '../atoms/heroCard'
 
 class Playground extends React.Component {
@@ -131,4 +132,8 @@ class Playground extends React.Component {
   }
 }
 
-export default Playground
+const mapStateToProps = ({ playground }) => ({
+  heroes: playground.heroes
+})
+
+export default connect(mapStateToProps)(Playground)
