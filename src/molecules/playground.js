@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import HeroCard from '../atoms/heroCard'
+import * as playgroundActions from '../actions/playground'
 
 class Playground extends React.Component {
   constructor(props) {
@@ -21,9 +22,9 @@ class Playground extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { heroes } = this.props
+    const { heroes, dispatch } = this.props
     if(nextProps.heroes !== heroes) {
-      this.getHeroesPlayground(nextProps.heroes)
+      dispatch(playgroundActions.shuffleHeroes(nextProps.heroes))
     }
   }
 
@@ -34,29 +35,19 @@ class Playground extends React.Component {
     }
   }
 
-  shuffleArray(array) {
-    const newArray = [].concat(array)
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      const temp = newArray[i]
-      newArray[i] = newArray[j]
-      newArray[j] = temp
-    }
-    return newArray
-  }
-
-  getHeroesPlayground(heroes) {
-    const heightHeroes = this.shuffleArray(Object.values(heroes))
-      .slice(0, 8)
-      .map(element => {
-        return { ...element, discovered: false }
-      })
-    const heroesArray = this.shuffleArray(heightHeroes.concat(heightHeroes))
-    this.setState({ heroesArray })
-  }
+  // getHeroesPlayground(heroes) {
+  //   const heightHeroes = shuffleArray(Object.values(heroes))
+  //     .slice(0, 8)
+  //     .map(element => {
+  //       return { ...element, discovered: false }
+  //     })
+  //   const heroesArray = shuffleArray(heightHeroes.concat(heightHeroes))
+  //   this.setState({ heroesArray })
+  // }
 
   pickCard(key) {
-    const { heroesPicked, heroesArray, timestamps } = this.state
+    const { heroesPicked, timestamps } = this.state
+    const { heroesArray } = this.props
 
     if (timestamps.length === 0) {
       const oldTimestamp = Date.now()
@@ -71,8 +62,8 @@ class Playground extends React.Component {
   }
 
   checkGameStatus() {
-    const { heroesArray, timestamps } = this.state
-    const { checkVictory } = this.props
+    const { timestamps } = this.state
+    const { checkVictory, heroesArray } = this.props
     const status = heroesArray.every(hero => {
       return hero.discovered
     })
@@ -85,7 +76,8 @@ class Playground extends React.Component {
   }
 
   checkCards() {
-    const { heroesPicked, heroesArray, oldTimestamp, timestamps } = this.state
+    const { heroesPicked, oldTimestamp, timestamps } = this.state
+    const { heroesArray } = this.props
 
     if (heroesPicked.length < 2) return
 
@@ -110,8 +102,8 @@ class Playground extends React.Component {
   }
 
   render() {
-    const { containerStyle, heroesPicked, heroesArray } = this.state
-    const { size } = this.props
+    const { containerStyle, heroesPicked } = this.state
+    const { size, heroesArray } = this.props
 
     return(
       <div style={containerStyle}>
@@ -133,7 +125,8 @@ class Playground extends React.Component {
 }
 
 const mapStateToProps = ({ playground }) => ({
-  heroes: playground.heroes
+  heroes: playground.heroes,
+  heroesArray: playground.heroesArray
 })
 
 export default connect(mapStateToProps)(Playground)

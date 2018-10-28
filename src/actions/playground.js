@@ -3,10 +3,16 @@ import md5 from 'blueimp-md5'
 export const FETCH_HEROES_REQUEST = 'FETCH_HEROES_REQUEST'
 export const FETCH_HEROES_SUCCESS = 'FETCH_HEROES_SUCCESS'
 export const FETCH_HEROES_ERROR = 'FETCH_HEROES_ERROR'
+export const SHUFFLE_HEROES = 'SHUFFLE_HEROES'
+export const PICK_CARD = 'PICK_CARD'
 
 const fetchHeroesRequest = () => ({ type: FETCH_HEROES_REQUEST })
 const fetchHeroesSuccess = heroes => ({ type: FETCH_HEROES_SUCCESS, heroes })
 const fetchHeroesError = error => ({ type: FETCH_HEROES_ERROR, error })
+
+export const shuffleHeroes = () => ({ type: SHUFFLE_HEROES })
+
+export const pickCard = () => ({ type: PICK_CARD })
 
 export const fetchHeroes = () => (dispatch) => {
   const baseURL = 'https://gateway.marvel.com:443/v1/public/'
@@ -43,6 +49,6 @@ export const fetchHeroes = () => (dispatch) => {
       dispatch(fetchHeroesSuccess(heroes));
     })
     .catch((error) => {
-      dispatch(fetchHeroesError(error.response ? error.response.data : error.message));
+      dispatch(fetchHeroesError(error.message))
     });
 }
