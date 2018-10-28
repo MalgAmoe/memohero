@@ -7,6 +7,9 @@ class Playground extends React.Component {
     this.state = {
       heroesPicked: [],
       heroesArray: [],
+      oldTimestamp: 0,
+      oldTimestamps: [],
+      score: 0,
       containerStyle: {
         display: 'flex',
         flexWrap: 'wrap',
@@ -53,8 +56,12 @@ class Playground extends React.Component {
   }
 
   pickCard(key) {
-    const { heroesPicked, heroesArray } = this.state
+    const { heroesPicked, heroesArray, oldTimestamps } = this.state
 
+    if (oldTimestamps.length === 0) {
+      const oldTimestamp = Date.now()
+      this.setState({ oldTimestamp, oldTimestamps: [oldTimestamp] })
+    }
     if (heroesPicked.length > 1) return this.setState({ heroesPicked: [] })
     if ((heroesPicked.length === 1 && heroesPicked[0] === key) || heroesArray[key].discovered) return
 
@@ -64,16 +71,16 @@ class Playground extends React.Component {
   }
 
   checkGameStatus() {
-    const { heroesArray } = this.state
+    const { heroesArray, score } = this.state
     const { checkVictory } = this.props
     const status = heroesArray.every(hero => {
       return hero.discovered
     })
-    checkVictory(status)
+    checkVictory(status, score)
   }
 
   checkCards() {
-    const { heroesPicked, heroesArray } = this.state
+    const { heroesPicked, heroesArray, oldTimestamp, oldTimestamps } = this.state
 
     if (heroesPicked.length < 2) return
 
@@ -83,13 +90,22 @@ class Playground extends React.Component {
     const secondCardId = heroesArray[secondCardKey].id
 
     if (firstCardId === secondCardId && firstCardKey !== secondCardKey) {
+      const timestamp = Date.now()
+      const newTimestamp = timestamp - oldTimestamp
+      const newTimestamps = [...oldTimestamps, newTimestamp]
       const newHeroesArray = heroesArray.map(hero => {
         if (hero.id === firstCardId || hero.id === secondCardId) {
           return { ...hero, discovered: true }
         }
         return hero
       })
-      this.setState({ heroesArray: newHeroesArray, heroesPicked: [] })
+      const score = newTimestamps.reduce((score, timestampDelta, key) => {
+        if(key === 0) return 0
+        score = score + Math.round(1000000 / timestampDelta)
+        return score
+      }, 0)
+
+      this.setState({ heroesArray: newHeroesArray, heroesPicked: [], oldTimestamp: timestamp, oldTimestamps: newTimestamps, score })
     }
   }
 
