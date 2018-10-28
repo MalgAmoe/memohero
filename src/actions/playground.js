@@ -1,7 +1,14 @@
-import md5 from 'blueimp-md5';
+import md5 from 'blueimp-md5'
 
-// TODO: handle errors, check if values on objects are available
-export default () => {
+export const FETCH_HEROES_REQUEST = 'FETCH_HEROES_REQUEST'
+export const FETCH_HEROES_SUCCESS = 'FETCH_HEROES_SUCCESS'
+export const FETCH_HEROES_ERROR = 'FETCH_HEROES_ERROR'
+
+const fetchHeroesRequest = () => ({ type: FETCH_HEROES_REQUEST })
+const fetchHeroesSuccess = heroes => ({ type: FETCH_HEROES_SUCCESS, heroes })
+const fetchHeroesError = error => ({ type: FETCH_HEROES_ERROR, error })
+
+export const fetchHeroes = () => (dispatch) => {
   const baseURL = 'https://gateway.marvel.com:443/v1/public/'
   const privateKey = 'e8b65f84acf29444acbc923a006b9c4963bfb1f6'
   const publicKey = '59a89e925adfc0807da3394a4528b889'
@@ -10,14 +17,16 @@ export default () => {
   const stringToHash = ts + privateKey + publicKey
   const hash = md5(stringToHash)
 
+  dispatch(fetchHeroesRequest())
+
   return fetch(`${baseURL}characters?limit=60&ts=${ts}&apikey=${publicKey}&hash=${hash}`)
     .then(response => {
       return response.json()
     })
-    .then(data => {
-      const results = data.data.results 
+    .then(({ data }) => {
+      const { results } = data
       let count = 0
-      return results.filter((element) => {
+      const heroes = results.filter((element) => {
         const elementHasAPicture = !element.thumbnail.path.includes('image_not_available') 
         if (elementHasAPicture) count++
         return elementHasAPicture && count <= 32
@@ -31,5 +40,9 @@ export default () => {
         heroes = { ...heroes, [hero.id]: { ...hero } }
         return heroes
       }, {})
+      dispatch(fetchHeroesSuccess(heroes));
     })
+    .catch((error) => {
+      dispatch(fetchHeroesError(error.response ? error.response.data : error.message));
+    });
 }
