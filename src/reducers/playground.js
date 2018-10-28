@@ -33,7 +33,7 @@ const shuffleHeroes = (state) => {
 const getScore = (timestamps) => {
   return timestamps.reduce((score, timestampDelta, key) => {
     if(key === 0) return 0
-    score = score + Math.pow(Math.round(100000 / timestampDelta), 2)
+    score = score + Math.pow(Math.round(100000 / ((1 + key / 16) * timestampDelta)), 2)
     return score
   }, 0)
 }

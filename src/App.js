@@ -32,27 +32,29 @@ class App extends Component {
 
   updateDimensions() {
     const { containerStyle } = this.state
-    const containerSize = Math.max(window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth, 300) - 40
+    const containerSize = Math.max(window.innerHeight < window.innerWidth ? window.innerHeight : window.innerWidth, 250) - 40
     const newContainerStyle = { ...containerStyle, width: containerSize, height: containerSize }
     this.setState({ containerStyle: newContainerStyle, containerSize})
   }
 
   restartGame() {
     const { dispatch } = this.props
-    console.log('llll')
     dispatch(playgroundActions.shuffleHeroes())
   }
 
   render() {
     const { containerStyle, containerSize } = this.state
-    const { victory, score } = this.props
-
+    const { victory, score, loading } = this.props
     return (
       <div className="App" style={containerStyle}>
-        { !victory && <div style={{color:'white'}}>{score}</div> }
+        { (!victory && !loading) && <div style={{color:'white', fontSize: '2em', marginTop: -20}}>Score: {score}</div> }
         {
           victory ?
-          <div style={{color:'white'}} onClick={() => this.restartGame()}>Yeahhhh {score} points for you</div> :
+          <div
+            style={{color:'white', fontSize: '3em', cursor: 'pointer'}}
+            onClick={() => this.restartGame()}
+          >Yeahhhh {score} points for you, click to retry
+          </div> :
           <Playground size={containerSize} />
         }
       </div>
@@ -62,7 +64,8 @@ class App extends Component {
 
 const mapStateToProps = ({ playground }) => ({
   score: playground.score,
-  victory: playground.victory
+  victory: playground.victory,
+  loading: playground.loading
 })
 
 export default connect(mapStateToProps)(App)
