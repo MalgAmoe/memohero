@@ -9,7 +9,8 @@
     "react-dom": "^16.5.2",
     "react-redux": "^5.1.0",
     "react-scripts": "2.0.5",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,5 +26,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "redux-devtools-extension": "^2.13.5"
+  }
 }
