@@ -27,13 +27,13 @@ const shuffleHeroes = (state) => {
         return { ...element, discovered: false }
       })
   const heroesArray = shuffleArray(heightHeroes.concat(heightHeroes))
-  return { ...state, heroesArray, score: 0, victory: false }
+  return { ...state, heroesArray, score: 0, victory: false, oldTimestamp: 0, timestamps: [] }
 }
 
 const getScore = (timestamps) => {
   return timestamps.reduce((score, timestampDelta, key) => {
     if(key === 0) return 0
-    score = score + Math.pow(Math.round(100000 / ((1 + key / 16) * timestampDelta)), 2)
+    score = score + Math.pow(Math.round(100000 / timestampDelta), 2)
     return score
   }, 0)
 }
